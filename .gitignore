@@ -1,0 +1,7 @@
+# secrets et fichiers locaux
+*.bak*
+*.tar.gz
+__pycache__/
+*.pyc
+# jamais le vrai netplan (clé Wi-Fi)
+50-cloud-init.yaml

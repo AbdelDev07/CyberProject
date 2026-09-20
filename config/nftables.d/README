@@ -1,0 +1,3 @@
+Tout fichier *.nft déposé ici est chargé à la fin de /etc/nftables.conf.
+Aucun fichier = pare-feu fermé (état normal du honeypot).
+Le mode maintenance (sortie Internet) est l'objet du TP suivant.
