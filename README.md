@@ -72,12 +72,4 @@ pdf/         les mêmes, en PDF (versions complètes avec schémas)
 config/      fichiers de configuration réellement en place sur la machine (secrets retirés)
 scripts/     scripts d'exploitation
 journal/     ce qui a été fait, quand, et ce qui a été constaté
-tools/       générateurs des PDF (Python / ReportLab)
-```
-
-## Reproduire les PDF
-
-```bash
-sudo apt install python3-reportlab fonts-dejavu
-cd tools/pdf-src && python3 cours.py
 ```
