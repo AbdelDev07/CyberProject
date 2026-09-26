@@ -1,0 +1,30 @@
+# Cowrie — honeypot SSH/Telnet
+# Phase 1 : publie sur le LAN uniquement (le pare-feu restreint les sources).
+services:
+  cowrie:
+    image: cowrie/cowrie:latest
+    container_name: cowrie
+    restart: unless-stopped
+    ports:
+      - "22:2222"       # SSH   : port publie 22  -> 2222 dans le conteneur
+      - "23:2223"       # Telnet: port publie 23  -> 2223 dans le conteneur
+    volumes:
+      - ./etc/cowrie.cfg:/cowrie/cowrie-git/etc/cowrie.cfg:ro
+      - ./etc/userdb.txt:/cowrie/cowrie-git/etc/userdb.txt:ro
+      - ./var/log/cowrie:/cowrie/cowrie-git/var/log/cowrie
+      - ./var/lib/cowrie/downloads:/cowrie/cowrie-git/var/lib/cowrie/downloads
+      - ./var/lib/cowrie/tty:/cowrie/cowrie-git/var/lib/cowrie/tty
+    # --- durcissement du conteneur ---
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m
+      - /cowrie/cowrie-git/var/run:size=16m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 200
+    mem_limit: 512m
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }

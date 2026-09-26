@@ -1,0 +1,14 @@
+# fail2ban — protege le VRAI SSH (port 2727).
+# Ne doit JAMAIS surveiller Cowrie : les attaques sur 22/23 sont le but du honeypot.
+[DEFAULT]
+backend = systemd
+banaction = nftables[type=allports]
+ignoreip = 127.0.0.1/8 ::1 192.168.1.33
+bantime  = 1h
+findtime = 10m
+maxretry = 4
+
+[sshd]
+enabled  = true
+port     = 2727
+logpath  = %(sshd_log)s

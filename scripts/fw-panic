@@ -1,0 +1,9 @@
+#!/bin/bash
+# fw-panic — bouton de secours : supprime tout filtrage et empêche le rechargement au boot.
+# À utiliser si le pare-feu coupe un accès et qu'on ne peut plus travailler.
+# Pour revenir à la normale :  sudo fw-restore
+set -e
+nft flush ruleset
+systemctl stop nftables 2>/dev/null || true
+echo "PARE-FEU DESACTIVE. La machine n'est plus protegee."
+echo "Pour le remettre :  sudo fw-restore"

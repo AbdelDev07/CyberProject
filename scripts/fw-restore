@@ -1,0 +1,6 @@
+#!/bin/bash
+# fw-restore — recharge le pare-feu depuis /etc/nftables.conf apres un fw-panic.
+set -e
+nft -c -f /etc/nftables.conf
+systemctl start nftables
+nft list ruleset | grep -c 'policy drop' >/dev/null && echo "Pare-feu actif (3 chaines en policy drop)."

@@ -1,0 +1,18 @@
+# Identifiants acceptes par le honeypot.
+# Format : utilisateur:uid:mot_de_passe      ('*' = n'importe quoi, '!' = jamais)
+# On accepte les mots de passe faibles que les robots testent en premier.
+root:x:123456
+root:x:admin
+root:x:root
+root:x:toor
+root:x:password
+root:x:1234
+root:x:admin123
+admin:x:admin
+admin:x:123456
+user:x:user
+test:x:test
+ubuntu:x:ubuntu
+pi:x:raspberry
+# tout le reste est refuse
+root:x:!*

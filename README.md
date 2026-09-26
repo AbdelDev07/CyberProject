@@ -37,9 +37,12 @@ Claude ne fait les actions à ma place que quand je le demande explicitement (re
 | 1. TP 1 — pare-feu nftables du honeypot | ✅ fait, corrigé | [TP](docs/02-tp1-parefeu.md) · [Correction](docs/03-correction-tp1.md) · [PDF](pdf/) |
 | 2. Cours nftables (écrit à partir de mes points bloquants) | ✅ | [docs/04-cours-nftables.md](docs/04-cours-nftables.md) · [PDF](pdf/Cours-nftables.pdf) |
 | 3. Pare-feu de base posé et activé sur la machine | ✅ fait | [journal/2026-09-20-nftables.md](journal/2026-09-20-nftables.md) · [config/nftables.conf](config/nftables.conf) |
-| 4. TP 2 — mode maintenance + installation Docker | 🔄 en cours | [docs/05-tp2-mode-maintenance.md](docs/05-tp2-mode-maintenance.md) · [PDF](pdf/TP2-mode-maintenance.pdf) |
-| 5. Cowrie dans Docker, redirection 22→2222, envoi vers ELK | ⏳ à venir | |
-| 6. Durcissement (fail2ban, sysctl, lynis) | ⏳ à venir | |
+| 4. TP 2 — mode maintenance + pièges Docker | ✅ écrit | [docs/05-tp2-mode-maintenance.md](docs/05-tp2-mode-maintenance.md) · [PDF](pdf/TP2-mode-maintenance.pdf) |
+| 5. Correction du pare-feu (incident du 24/09) + refonte de la conception | ✅ fait | [journal/2026-09-26-cowrie.md](journal/2026-09-26-cowrie.md) · [config/nftables.conf](config/nftables.conf) |
+| 6. TP 3 — Cowrie conteneurisé, isolé, logs vers ELK | ✅ fait | [TP](docs/06-tp3-cowrie.md) · [PDF](pdf/TP3-cowrie.pdf) |
+| 7. Cours honeypots | ✅ | [docs/07-cours-honeypots.md](docs/07-cours-honeypots.md) · [PDF](pdf/Cours-honeypots.pdf) |
+| 8. VM ELK : Logstash + Kibana, tableaux de bord | 🔄 en cours | |
+| 9. Phase 2 : exposition sur Internet | ⏳ à venir | [docs/06 §6](docs/06-tp3-cowrie.md) |
 
 ## Le laboratoire
 
@@ -64,12 +67,29 @@ Les erreurs que j'ai faites au TP 1, toutes retrouvées dans `dmesg` par Claude 
 
 Le détail, avec les preuves, est dans la [correction](docs/03-correction-tp1.md).
 
+Puis une sixième, le 24/09, qui a coûté un accès : des règles posées **en mémoire** (`nft add rule`) ont disparu au redémarrage, coupant la sortie HTTPS de la machine. Elle a aussi révélé une **erreur de conception** : fermer la sortie Internet de l'*hôte* n'était pas demandé et n'apportait presque rien — la menace réelle, c'est le conteneur, et elle se contient dans la chaîne `forward`. Voir le [journal du 26/09](journal/2026-09-26-cowrie.md).
+
+## Où en est la sécurité, concrètement
+
+Test d'isolation mené depuis un conteneur placé sur le réseau de Cowrie :
+
+```
+-> 192.168.1.254 (box)     : BLOQUE
+-> 192.168.1.33 (PC admin) : BLOQUE
+-> 192.168.1.63:2727 (SSH) : BLOQUE
+-> 1.1.1.1:443 (Internet)  : BLOQUE
+-> 192.168.1.35:5044 (ELK) : autorisé
+```
+
+Un attaquant qui prendrait le contrôle du honeypot ne peut joindre que le collecteur de journaux. Chaque refus est tracé (`FWD-CONTAINER-DROP`).
+
 ## Organisation du dépôt
 
 ```
 docs/        les TP, corrections et cours en Markdown
 pdf/         les mêmes, en PDF (versions complètes avec schémas)
 config/      fichiers de configuration réellement en place sur la machine (secrets retirés)
-scripts/     scripts d'exploitation
+             nftables.conf, cowrie/, filebeat.yml, fail2ban-jail.local
+scripts/     fw-panic / fw-restore (secours pare-feu), fw-maint (exercice TP 2)
 journal/     ce qui a été fait, quand, et ce qui a été constaté
 ```
